@@ -59,8 +59,17 @@ export async function onRequestPost(context) {
 访客 IP：${ip}
 Referer：${referer}`
 
-  const webhookUrl = context.env?.WECOM_WEBHOOK_URL || 
-    'https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=42c016bd-8c7e-4c8a-979b-df2a439dfe14'
+  const webhookUrl = context.env?.WECOM_WEBHOOK_URL
+  if (!webhookUrl) {
+    console.error('Missing WECOM_WEBHOOK_URL environment variable')
+    return new Response(JSON.stringify({ 
+      success: false, 
+      message: 'Server configuration error' 
+    }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json; charset=utf-8' }
+    })
+  }
 
   try {
     const webhookResponse = await fetch(webhookUrl, {

@@ -1,12 +1,6 @@
-function safeText(str) {
+function safeText(str, maxLength = 255) {
   if (!str || typeof str !== 'string') return ''
-  return str
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#x27;')
-    .trim()
+  return str.trim().slice(0, maxLength)
 }
 
 export async function onRequestPost(context) {
@@ -60,32 +54,30 @@ export async function onRequestPost(context) {
 Referer：${referer}`
 
   const webhookUrl = context.env?.WECOM_WEBHOOK_URL
+  
+  // If no webhook configured, log and continue (for development/testing)
   if (!webhookUrl) {
-    console.error('Missing WECOM_WEBHOOK_URL environment variable')
-    return new Response(JSON.stringify({ 
-      success: false, 
-      message: 'Server configuration error' 
-    }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json; charset=utf-8' }
-    })
-  }
-
-  try {
-    const webhookResponse = await fetch(webhookUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        msgtype: 'text',
-        text: { content: message }
+    console.log('No WECOM_WEBHOOK_URL configured, skipping notification')
+    console.log('Lead data:', { company, contactName, phone, requirement, source })
+  } else {
+    try {
+      const webhookResponse = await fetch(webhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          msgtype: 'text',
+          text: { content: message }
+        })
       })
-    })
 
-    if (!webhookResponse.ok) {
-      console.error('Webhook failed:', await webhookResponse.text())
+      if (!webhookResponse.ok) {
+        console.error('Webhook failed:', await webhookResponse.text())
+      } else {
+        console.log('Webhook sent successfully')
+      }
+    } catch (error) {
+      console.error('Webhook error:', error)
     }
-  } catch (error) {
-    console.error('Webhook error:', error)
   }
 
   return new Response(JSON.stringify({ success: true, message: '提交成功' }), {

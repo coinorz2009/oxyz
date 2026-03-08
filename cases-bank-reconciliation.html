@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>银企直连自动对账：支付与财务流水归集案例 - 云飞互联</title>
+  <meta name="description" content="通过银企直连 + 聚合支付对账中台，帮助多渠道收款企业实现自动化流水归集、接近 0 人工核对、更快日终对账。" />
+  <meta name="theme-color" content="#0f172a" />
+
+  <style>
+    :root {
+      --bg: #081120;
+      --bg-soft: #0f172a;
+      --card: rgba(255,255,255,0.06);
+      --card-border: rgba(255,255,255,0.12);
+      --text: #e5eefc;
+      --muted: #9fb1cc;
+      --primary: #3b82f6;
+      --primary-2: #60a5fa;
+      --accent: #22c55e;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --white: #ffffff;
+      --shadow: 0 20px 60px rgba(0,0,0,0.35);
+      --radius: 18px;
+      --container: 1200px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+        "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(59,130,246,0.18), transparent 32%),
+        radial-gradient(circle at top right, rgba(34,197,94,0.12), transparent 26%),
+        linear-gradient(180deg, #07101d 0%, #0b1323 100%);
+      color: var(--text);
+      line-height: 1.7;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    img {
+      max-width: 100%;
+      display: block;
+    }
+
+    .container {
+      width: min(var(--container), calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    .section {
+      padding: 88px 0;
+    }
+
+    .section-title {
+      font-size: 40px;
+      line-height: 1.2;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin: 0 0 16px;
+      color: var(--white);
+    }
+
+    .section-subtitle {
+      max-width: 820px;
+      color: var(--muted);
+      font-size: 17px;
+      margin: 0 0 36px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 16px;
+      border: 1px solid rgba(96,165,250,0.25);
+      background: rgba(59,130,246,0.1);
+      color: #cfe2ff;
+      border-radius: 999px;
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(14px);
+      background: rgba(8,17,32,0.75);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 72px;
+      gap: 20px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 800;
+      font-size: 18px;
+      color: var(--white);
+    }
+
+    .logo-mark {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      box-shadow: 0 10px 30px rgba(59,130,246,0.35);
+      display: inline-block;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .nav-links a:hover {
+      color: var(--white);
+    }
+
+    .nav-cta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 18px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      color: var(--white);
+      font-weight: 700;
+      box-shadow: 0 12px 30px rgba(59,130,246,0.25);
+    }
+
+    /* Hero Section */
+    .case-hero {
+      padding: 60px 0 40px;
+    }
+
+    .breadcrumb {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 18px;
+    }
+
+    .breadcrumb a:hover {
+      color: var(--white);
+    }
+
+    .breadcrumb span {
+      opacity: 0.6;
+    }
+
+    .case-hero h1 {
+      font-size: clamp(32px, 4vw, 48px);
+      line-height: 1.2;
+      margin: 0 0 16px;
+      font-weight: 800;
+      color: var(--white);
+    }
+
+    .case-hero p {
+      font-size: 17px;
+      color: var(--muted);
+      margin: 0 0 24px;
+      max-width: 780px;
+    }
+
+    /* Metrics Grid */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-top: 24px;
+    }
+
+    .metric-card {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .metric-value {
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+
+    .metric-label {
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    /* Article Layout */
+    .article-layout {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 32px;
+      align-items: start;
+    }
+
+    .article-main {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      padding: 32px;
+      min-height: 600px;
+    }
+
+    .article-sidebar {
+      position: sticky;
+      top: 90px;
+    }
+
+    /* Content Styles */
+    .content-section {
+      margin-bottom: 40px;
+    }
+
+    .content-section:last-child {
+      margin-bottom: 0;
+    }
+
+    .content-section h2 {
+      font-size: 26px;
+      color: var(--white);
+      margin: 0 0 18px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    .content-section h3 {
+      font-size: 20px;
+      color: var(--white);
+      margin: 24px 0 12px;
+    }
+
+    .content-section p {
+      color: var(--muted);
+      margin: 0 0 16px;
+      font-size: 16px;
+      line-height: 1.8;
+    }
+
+    .content-section ul {
+      color: var(--muted);
+      padding-left: 24px;
+      margin: 0 0 16px;
+    }
+
+    .content-section li {
+      margin-bottom: 10px;
+      font-size: 16px;
+      line-height: 1.8;
+    }
+
+    .highlight-box {
+      background: rgba(59,130,246,0.1);
+      border: 1px solid rgba(96,165,250,0.3);
+      border-radius: 14px;
+      padding: 18px 20px;
+      margin: 18px 0;
+    }
+
+    .highlight-box strong {
+      display: block;
+      color: var(--white);
+      margin-bottom: 8px;
+      font-size: 15px;
+    }
+
+    .highlight-box span {
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .challenge-list, .solution-list {
+      display: grid;
+      gap: 12px;
+      margin: 16px 0;
+    }
+
+    .challenge-item, .solution-item {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+
+    .item-icon {
+      width: 40px;
+      height: 40px;
+      min-width: 40px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, rgba(239,68,68,0.2), rgba(245,158,11,0.2));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+
+    .solution-item .item-icon {
+      background: linear-gradient(135deg, rgba(59,130,246,0.2), rgba(34,197,94,0.2));
+    }
+
+    .item-content strong {
+      display: block;
+      color: var(--white);
+      margin-bottom: 6px;
+      font-size: 15px;
+    }
+
+    .item-content span {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .phase-timeline {
+      display: grid;
+      gap: 14px;
+      margin: 18px 0;
+    }
+
+    .phase-item {
+      position: relative;
+      padding-left: 40px;
+      padding-bottom: 14px;
+      border-left: 2px solid var(--card-border);
+    }
+
+    .phase-item:last-child {
+      border-left-color: transparent;
+      padding-bottom: 0;
+    }
+
+    .phase-item::before {
+      content: "";
+      position: absolute;
+      left: -8px;
+      top: 0;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--accent);
+      border: 2px solid var(--bg);
+    }
+
+    .phase-title {
+      color: var(--white);
+      font-weight: 700;
+      font-size: 16px;
+      margin-bottom: 6px;
+    }
+
+    .phase-desc {
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+      margin: 18px 0;
+    }
+
+    .result-item {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px;
+      padding: 18px;
+      text-align: center;
+    }
+
+    .result-number {
+      font-size: 36px;
+      font-weight: 800;
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+
+    .result-text {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    /* Sidebar */
+    .sidebar-card {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+
+    .sidebar-title {
+      font-size: 18px;
+      color: var(--white);
+      margin: 0 0 16px;
+      font-weight: 700;
+    }
+
+    .summary-grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .summary-row:last-child {
+      border-bottom: none;
+    }
+
+    .summary-label {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .summary-value {
+      color: var(--white);
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .related-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .related-item {
+      padding: 14px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      transition: 0.2s ease;
+    }
+
+    .related-item:hover {
+      background: rgba(255,255,255,0.08);
+      border-color: rgba(255,255,255,0.14);
+    }
+
+    .related-item strong {
+      display: block;
+      color: var(--white);
+      margin-bottom: 4px;
+      font-size: 14px;
+    }
+
+    .related-item span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    /* CTA Box */
+    .case-cta {
+      background:
+        radial-gradient(circle at top right, rgba(59,130,246,0.16), transparent 30%),
+        linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.04));
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      padding: 28px;
+      text-align: center;
+      margin-top: 40px;
+    }
+
+    .case-cta h3 {
+      font-size: 24px;
+      color: var(--white);
+      margin: 0 0 12px;
+    }
+
+    .case-cta p {
+      color: var(--muted);
+      margin: 0 0 20px;
+      font-size: 16px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 50px;
+      padding: 0 28px;
+      border-radius: 14px;
+      font-weight: 800;
+      transition: 0.25s ease;
+      border: 1px solid transparent;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      color: var(--white);
+      box-shadow: 0 12px 28px rgba(59,130,246,0.28);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+      background: rgba(255,255,255,0.03);
+      color: var(--white);
+      border-color: rgba(255,255,255,0.14);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255,255,255,0.08);
+    }
+
+    footer {
+      padding: 28px 0 44px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .footer-line {
+      border-top: 1px solid rgba(255,255,255,0.08);
+      padding-top: 24px;
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 1080px) {
+      .metrics-grid,
+      .article-layout,
+      .results-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .results-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .nav-links {
+        display: none;
+      }
+    }
+
+    .contact-contact {
+      padding: 48px 0;
+    }
+
+    .contact-item p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .contact-item span {
+      display: block;
+      margin-top: 6px;
+      color: var(--white);
+      font-size: 16px;
+    }
+
+    @media (max-width: 640px) {
+      .section {
+        padding: 68px 0;
+      }
+
+      .contact-contact {
+        padding: 40px 0;
+      }
+
+      .metrics-grid,
+      .results-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .metrics-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .content-section h2 {
+        font-size: 22px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="nav">
+    <div class="container nav-inner">
+      <a href="index.html" class="logo">
+        <span class="logo-mark"></span>
+        <span>云飞互联 YunFei-Link</span>
+      </a>
+
+      <nav class="nav-links">
+        <a href="index.html#ecosystem">对接生态</a>
+        <a href="index.html#plugins">定制插件</a>
+        <a href="index.html#advantages">技术优势</a>
+        <a href="index.html#cases">成功案例</a>
+        <a href="index.html#process">服务流程</a>
+      </nav>
+
+      <a href="index.html#contact" class="nav-cta">获取专属对接方案</a>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero Section -->
+    <section class="case-hero">
+      <div class="container">
+        <div class="breadcrumb">
+          <a href="index.html">首页</a>
+          <span>/</span>
+          <a href="index.html#cases">成功案例</a>
+          <span>/</span>
+          <span>银企直连自动对账案例</span>
+        </div>
+
+        <h1>银企直连自动对账：支付与财务流水归集案例</h1>
+        <p>
+          通过银企直连 + 聚合支付对账中台，帮助多渠道收款企业建立统一的数据归集通道，实现自动化流水匹配、接近 0 人工核对、更快日终对账。
+        </p>
+
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <div class="metric-value">自动化</div>
+            <div class="metric-label">流水归集</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-value">~0</div>
+            <div class="metric-label">人工核对</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-value">分钟级</div>
+            <div class="metric-label">日终对账</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-value">稳定追踪</div>
+            <div class="metric-label">异常处理</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Article Layout -->
+    <section class="section">
+      <div class="container article-layout">
+        <!-- Main Content -->
+        <article class="article-main">
+          <!-- Project Background -->
+          <section class="content-section">
+            <h2>项目背景</h2>
+            <p>
+              该客户为全国性零售连锁企业，在全国设有超过 800 家门店，业务覆盖线上线下全渠道。每日产生海量收款交易，涉及微信支付、支付宝、银联云闪付、银行 POS 等多个支付渠道。在项目实施前，企业的财务部门需要每天从多个平台手动导出银行流水和支付账单，然后逐条进行人工比对。
+            </p>
+            <p>
+              随着业务规模扩大，日均交易额突破 2000 万元，日均可达数万笔交易。财务团队由最初的 2-3 人扩张至 12 人，但仍难以应对日益增长的对账工作量。月末关账常常需要延期 3-5 天才能完成，严重影响财务报表的及时性。
+            </p>
+            <div class="highlight-box">
+              <strong>核心诉求</strong>
+              <span>打通所有支付渠道与银行账户的数据链路，实现自动化流水归集与智能对账，释放财务人员精力，提升日结与月结效率。</span>
+            </div>
+          </section>
+
+          <!-- Customer Challenges -->
+          <section class="content-section">
+            <h2>客户挑战</h2>
+            <div class="challenge-list">
+              <div class="challenge-item">
+                <div class="item-icon">📋</div>
+                <div class="item-content">
+                  <strong>多平台数据孤岛严重</strong>
+                  <span>微信支付、支付宝、银联、各银行网点等 15+ 个支付渠道数据格式各异，每日需登录不同平台下载 Excel 账单。数据口径不一致、字段定义不统一，缺乏统一的映射标准。</span>
+                </div>
+              </div>
+              <div class="challenge-item">
+                <div class="item-icon">⏰</div>
+                <div class="item-content">
+                  <strong>手工对账耗时费力</strong>
+                  <span>财务团队日均需处理 3-5 万个交易记录，传统方式下每笔交易的比对平均耗时 1.5 分钟。高峰期加班至凌晨成为常态，人力成本占比高达财务部门总预算的 45%。</span>
+                </div>
+              </div>
+              <div class="challenge-item">
+                <div class="item-icon">💼</div>
+                <div class="item-content">
+                  <strong>异常款项追踪困难</strong>
+                  <span>因退款延迟、手续费差异、跨行结算时差等原因产生的差异明细，往往需要财务人员在多个系统间交叉查询，单笔异常追溯耗时长达 30 分钟以上，大量差异积压无法及时处理。</span>
+                </div>
+              </div>
+              <div class="challenge-item">
+                <div class="item-icon">💔</div>
+                <div class="item-content">
+                  <strong>日结月结效率低下</strong>
+                  <span>每日日终对账需耗时 8-10 小时，月末关账需要连续 3-5 天加班加点仍难以保证准确性。财务报表输出滞后，管理层无法及时获取经营数据分析决策。</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Solution -->
+          <section class="content-section">
+            <h2>解决方案</h2>
+            <p>
+              我们为客户量身定制了<strong>「银企直连 + 聚合支付对账中台」一体化解决方案</strong>，通过建立标准化的数据采集、转换、匹配、预警全流程引擎，彻底重塑了企业的资金对账体系。
+            </p>
+
+            <div class="solution-list">
+              <div class="solution-item">
+                <div class="item-icon">✓</div>
+                <div class="item-content">
+                  <strong>银企直连接入</strong>
+                  <span>接入工农中建交等主流银行的银企直连 API，实现银行账户交易流水的实时/定时自动拉取，支持多账号集中管理，T+0 准实时数据同步。</span>
+                </div>
+              </div>
+              <div class="solution-item">
+                <div class="item-icon">✓</div>
+                <div class="item-content">
+                  <strong>聚合支付对账中台</strong>
+                  <span>构建统一的数据采集层，整合微信支付 RPP、支付宝开放平台、银联清算网络等 15+ 支付渠道接口，标准化 200+ 个字段映射规则，形成单一事实来源。</span>
+                </div>
+              </div>
+              <div class="solution-item">
+                <div class="item-icon">✓</div>
+                <div class="item-content">
+                  <strong>自动匹配规则引擎</strong>
+                  <span>基于订单号、金额、时间窗口、渠道标识等多维度设计智能匹配算法，支持自定义容差范围（手续费差异、跨行时差），日对账准确率超 99.8%。</span>
+                </div>
+              </div>
+              <div class="solution-item">
+                <div class="item-icon">✓</div>
+                <div class="item-content">
+                  <strong>异常追踪与告警机制</strong>
+                  <span>差异款项自动归类标记（长款/短款/待确认），触发多级告警策略，异常单据进入工单流转系统，支持一键导出差异分析报告。</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="highlight-box">
+              <strong>技术亮点</strong>
+              <span>采用流式计算架构保障实时性；内置幂等校验确保数据一致性；支持灰度切换验证；提供可视化规则配置界面；支持多维度穿透分析报表。</span>
+            </div>
+          </section>
+
+          <!-- Delivery Process -->
+          <section class="content-section">
+            <h2>交付过程</h2>
+            <p>
+              为确保业务平稳过渡，我们采取「分步上线、并行验证」的策略，历时 10 周完成全流程建设：
+            </p>
+            <div class="phase-timeline">
+              <div class="phase-item">
+                <div class="phase-title">第一阶段：需求调研与渠道对接（2 周）</div>
+                <div class="phase-desc">梳理全部 15+ 个支付渠道与银行账户的对接需求，收集历史账单样本，制定数据标准化规范，完成工行、建行两大银行的银企直连接入审批。</div>
+              </div>
+              <div class="phase-item">
+                <div class="phase-title">第二阶段：核心对账引擎开发（3 周）</div>
+                <div class="phase-desc">搭建数据采集管道、ETL 转换引擎、智能匹配算法库三大核心模块，实现基础的自动对账功能，并完成与微信、支付宝、银联的直接对接。</div>
+              </div>
+              <div class="phase-item">
+                <div class="phase-title">第三阶段：异常处理与报表体系建设（2 周）</div>
+                <div class="phase-desc">完善差异款项的分类规则与工单流转逻辑，开发多维度分析报表（按渠道、门店、区域、时间段），配置告警通知策略。</div>
+              </div>
+              <div class="phase-item">
+                <div class="phase-title">第四阶段：试点运行与效果验证（2 周）</div>
+                <div class="phase-desc">选取华东区 100 家门店先行试点，与原有手工流程并行运行两周，对比对账结果一致性达到 99.9%，差异项识别率提升 7 倍。</div>
+              </div>
+              <div class="phase-item">
+                <div class="phase-title">第五阶段：全国推广与全面验收（1 周）</div>
+                <div class="phase-desc">分批次将剩余 700+ 门店接入新系统，完成银企直连全部账户切流，组织财务团队操作培训，正式验收交付。</div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Project Results -->
+          <section class="content-section">
+            <h2>项目成果</h2>
+            <p>
+              系统自全面上线半年以来，客户的财务运营效率实现了质的飞跃，关键指标表现如下：
+            </p>
+
+            <div class="results-grid">
+              <div class="result-item">
+                <div class="result-number">99.8%</div>
+                <div class="result-text">流水自动匹配率</div>
+              </div>
+              <div class="result-item">
+                <div class="result-number">-95%</div>
+                <div class="result-text">人工核对工作量</div>
+              </div>
+              <div class="result-item">
+                <div class="result-number"><15min</div>
+                <div class="result-text">日终对账时效</div>
+              </div>
+              <div class="result-item">
+                <div class="result-number">-3→1h</div>
+                <div class="result-text">异常处理周期</div>
+              </div>
+            </div>
+
+            <p>
+              <strong>实战数据：</strong>截至 2026 年 1 月，系统已累计自动处理交易记录超 9000 万笔，日均归集流水 3.2 万条，日终对账准时完成率 100%，财务月结时间从原来的 5 天缩短至 1 个工作日内。因差错导致的资金损失同比下降 87%。
+            </p>
+
+            <p>
+              <strong>客户评价：</strong>「这次上系统后，我们整个对账流程完全变了。以前每到月底全财务部都要熬夜，现在是下午 5 点跑一下对账脚本，6 点就能拿着准确报表下班。而且财务团队的精力可以转移到经营分析更有价值的工作上去。」
+            </p>
+          </section>
+
+          <!-- CTA -->
+          <div class="case-cta">
+            <h3>您的企业是否也在面临对账难题？</h3>
+            <p>
+              我们将为您提供免费的支付渠道对账现状诊断与优化建议方案。
+            </p>
+            <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;">
+              <a href="index.html#contact" class="btn btn-primary">联系获取专属方案</a>
+              <a href="index.html#cases" class="btn btn-secondary">查看更多案例</a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Sidebar -->
+        <aside class="article-sidebar">
+          <div class="sidebar-card">
+            <h3 class="sidebar-title">项目概览</h3>
+            <div class="summary-grid">
+              <div class="summary-row">
+                <span class="summary-label">客户类型</span>
+                <span class="summary-value">全国连锁零售企业</span>
+              </div>
+              <div class="summary-row">
+                <span class="summary-label">门店规模</span>
+                <span class="summary-value">800+ 全国门店</span>
+              </div>
+              <div class="summary-row">
+                <span class="summary-label">涉及渠道</span>
+                <span class="summary-value">15+ 支付/银行</span>
+              </div>
+              <div class="summary-row">
+                <span class="summary-label">项目周期</span>
+                <span class="summary-value">约 10 周</span>
+              </div>
+              <div class="summary-row">
+                <span class="summary-label">核心功能</span>
+                <span class="summary-value">银企直连/自动对账/异常追踪</span>
+              </div>
+              <div class="summary-row">
+                <span class="summary-label">行业领域</span>
+                <span class="summary-value">新零售 / 金融科技</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="sidebar-card">
+            <h3 class="sidebar-title">相关案例</h3>
+            <div class="related-list">
+              <a href="cases-tea-chain.html" class="related-item">
+                <strong>全国连锁茶饮 (300+ 门店)</strong>
+                <span>有赞 + 客如云 + 通联支付集成</span>
+              </a>
+              <a href="cases-youzan-kingdee.html" class="related-item">
+                <strong>连锁零售品牌 (200+ 门店)</strong>
+                <span>有赞 + 金蝶 ERP 订单库存同步</span>
+              </a>
+              <a href="index.html#cases" class="related-item">
+                <strong>更多成功案例</strong>
+                <span>浏览全部行业案例</span>
+              </a>
+            </div>
+          </div>
+
+          <div class="sidebar-card" style="background:linear-gradient(135deg, rgba(59,130,246,0.15), rgba(34,197,94,0.1'));">
+            <h3 class="sidebar-title">需要技术方案咨询？</h3>
+            <p style="color:var(--muted);font-size:14px;margin:0 0 12px;">
+              工作时间 1 小时内响应，复杂项目配备专属技术顾问。
+            </p>
+            <a href="index.html#contact" class="btn btn-primary" style="width:100%;">免费咨询</a>
+          </div>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <!-- Contact Section -->
+  <section class="section contact-contact" style="border-top: 1px solid rgba(255,255,255,0.08);">
+    <div class="container">
+      <h3 style="font-size: 16px; margin-bottom: 14px;">联系我们</h3>
+      <div style="display: grid; gap: 10px;">
+        <div class="contact-item" style="padding: 12px 16px; border-radius: 12px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);">
+          <strong>商务热线</strong>
+          <span>13739185304</span>
+        </div>
+        <div class="contact-item" style="padding: 12px 16px; border-radius: 12px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);">
+          <strong>微信咨询</strong>
+          <p>扫码关注公众号或添加微信，获取详细方案。</p>
+          <img class="qrcode-small" src="docs/云飞企微.QRCODE.jpg" alt="微信二维码" style="width:120px; height:120px; margin-top:10px; border-radius:12px;" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container footer-line">
+      <div>© 2026 云飞互联 YunFei-Link. All Rights Reserved.</div>
+      <div>企业级三方系统对接专家 · 重塑业务连接，让数据释放增长价值</div>
+    </div>
+  </footer>
+</body>
+</html>

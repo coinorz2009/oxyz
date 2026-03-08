@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>某全国连锁茶饮系统对接案例 - 云飞互联</title>
+  <meta name="description" content="通过打通有赞商城、客如云 POS 与通联支付，帮助全国连锁茶饮品牌建立统一的数据链路，会员复购提升 35%，对账缩短至 15 分钟。" />
+  <meta name="theme-color" content="#0f172a" />
+
+  <style>
+    :root {
+      --bg: #081120;
+      --bg-soft: #0f172a;
+      --card: rgba(255,255,255,0.06);
+      --card-border: rgba(255,255,255,0.12);
+      --text: #e5eefc;
+      --muted: #9fb1cc;
+      --primary: #3b82f6;
+      --primary-2: #60a5fa;
+      --accent: #22c55e;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --white: #ffffff;
+      --shadow: 0 20px 60px rgba(0,0,0,0.35);
+      --radius: 18px;
+      --container: 1200px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+        "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(59,130,246,0.18), transparent 32%),
+        radial-gradient(circle at top right, rgba(34,197,94,0.12), transparent 26%),
+        linear-gradient(180deg, #07101d 0%, #0b1323 100%);
+      color: var(--text);
+      line-height: 1.7;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    img {
+      max-width: 100%;
+      display: block;
+    }
+
+    .container {
+      width: min(var(--container), calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    .section {
+      padding: 88px 0;
+    }
+
+    .section-title {
+      font-size: 40px;
+      line-height: 1.2;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin: 0 0 16px;
+      color: var(--white);
+    }
+
+    .section-subtitle {
+      max-width: 820px;
+      color: var(--muted);
+      font-size: 17px;
+      margin: 0 0 36px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 16px;
+      border: 1px solid rgba(96,165,250,0.25);
+      background: rgba(59,130,246,0.1);
+      color: #cfe2ff;
+      border-radius: 999px;
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(14px);
+      background: rgba(8,17,32,0.75);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 72px;
+      gap: 20px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 800;
+      font-size: 18px;
+      color: var(--white);
+    }
+
+    .logo-mark {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      box-shadow: 0 10px 30px rgba(59,130,246,0.35);
+      display: inline-block;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .nav-links a:hover {
+      color: var(--white);
+    }
+
+    .nav-cta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 18px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      color: var(--white);
+      font-weight: 700;
+      box-shadow: 0 12px 30px rgba(59,130,246,0.25);
+    }
+
+    /* Hero Section */
+    .case-hero {
+      padding: 60px 0 40px;
+    }
+
+    .breadcrumb {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 18px;
+    }
+
+    .breadcrumb a:hover {
+      color: var(--white);
+    }
+
+    .breadcrumb span {
+      opacity: 0.6;
+    }
+
+    .case-hero h1 {
+      font-size: clamp(32px, 4vw, 48px);
+      line-height: 1.2;
+      margin: 0 0 16px;
+      font-weight: 800;
+      color: var(--white);
+    }
+
+    .case-hero p {
+      font-size: 17px;
+      color: var(--muted);
+      margin: 0 0 24px;
+      max-width: 780px;
+    }
+
+    /* Metrics Grid */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-top: 24px;
+    }
+
+    .metric-card {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .metric-value {
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+
+    .metric-label {
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    /* Article Layout */
+    .article-layout {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 32px;
+      align-items: start;
+    }
+
+    .article-main {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      padding: 32px;
+      min-height: 600px;
+    }
+
+    .article-sidebar {
+      position: sticky;
+      top: 90px;
+    }
+
+    /* Content Styles */
+    .content-section {
+      margin-bottom: 40px;
+    }
+
+    .content-section:last-child {
+      margin-bottom: 0;
+    }
+
+    .content-section h2 {
+      font-size: 26px;
+      color: var(--white);
+      margin: 0 0 18px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    .content-section h3 {
+      font-size: 20px;
+      color: var(--white);
+      margin: 24px 0 12px;
+    }
+
+    .content-section p {
+      color: var(--muted);
+      margin: 0 0 16px;
+      font-size: 16px;
+      line-height: 1.8;
+    }
+
+    .content-section ul {
+      color: var(--muted);
+      padding-left: 24px;
+      margin: 0 0 16px;
+    }
+
+    .content-section li {
+      margin-bottom: 10px;
+      font-size: 16px;
+      line-height: 1.8;
+    }
+
+    .highlight-box {
+      background: rgba(59,130,246,0.1);
+      border: 1px solid rgba(96,165,250,0.3);
+      border-radius: 14px;
+      padding: 18px 20px;
+      margin: 18px 0;
+    }
+
+    .highlight-box strong {
+      display: block;
+      color: var(--white);
+      margin-bottom: 8px;
+      font-size: 15px;
+    }
+
+    .highlight-box span {
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .challenge-list, .solution-list {
+      display: grid;
+      gap: 12px;
+      margin: 16px 0;
+    }
+
+    .challenge-item, .solution-item {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+
+    .item-icon {
+      width: 40px;
+      height: 40px;
+      min-width: 40px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, rgba(239,68,68,0.2), rgba(245,158,11,0.2));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+
+    .solution-item .item-icon {
+      background: linear-gradient(135deg, rgba(59,130,246,0.2), rgba(34,197,94,0.2));
+    }
+
+    .item-content strong {
+      display: block;
+      color: var(--white);
+      margin-bottom: 6px;
+      font-size: 15px;
+    }
+
+    .item-content span {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .phase-timeline {
+      display: grid;
+      gap: 14px;
+      margin: 18px 0;
+    }
+
+    .phase-item {
+      position: relative;
+      padding-left: 40px;
+      padding-bottom: 14px;
+      border-left: 2px solid var(--card-border);
+    }
+
+    .phase-item:last-child {
+      border-left-color: transparent;
+      padding-bottom: 0;
+    }
+
+    .phase-item::before {
+      content: "";
+      position: absolute;
+      left: -8px;
+      top: 0;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--accent);
+      border: 2px solid var(--bg);
+    }
+
+    .phase-title {
+      color: var(--white);
+      font-weight: 700;
+      font-size: 16px;
+      margin-bottom: 6px;
+    }
+
+    .phase-desc {
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+      margin: 18px 0;
+    }
+
+    .result-item {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px;
+      padding: 18px;
+      text-align: center;
+    }
+
+    .result-number {
+      font-size: 36px;
+      font-weight: 800;
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+
+    .result-text {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    /* Sidebar */
+    .sidebar-card {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+
+    .sidebar-title {
+      font-size: 18px;
+      color: var(--white);
+      margin: 0 0 16px;
+      font-weight: 700;
+    }
+
+    .summary-grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .summary-row:last-child {
+      border-bottom: none;
+    }
+
+    .summary-label {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .summary-value {
+      color: var(--white);
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .related-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .related-item {
+      padding: 14px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      transition: 0.2s ease;
+    }
+
+    .related-item:hover {
+      background: rgba(255,255,255,0.08);
+      border-color: rgba(255,255,255,0.14);
+    }
+
+    .related-item strong {
+      display: block;
+      color: var(--white);
+      margin-bottom: 4px;
+      font-size: 14px;
+    }
+
+    .related-item span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    /* CTA Box */
+    .case-cta {
+      background:
+        radial-gradient(circle at top right, rgba(59,130,246,0.16), transparent 30%),
+        linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.04));
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      padding: 28px;
+      text-align: center;
+      margin-top: 40px;
+    }
+
+    .case-cta h3 {
+      font-size: 24px;
+      color: var(--white);
+      margin: 0 0 12px;
+    }
+
+    .case-cta p {
+      color: var(--muted);
+      margin: 0 0 20px;
+      font-size: 16px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 50px;
+      padding: 0 28px;
+      border-radius: 14px;
+      font-weight: 800;
+      transition: 0.25s ease;
+      border: 1px solid transparent;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      color: var(--white);
+      box-shadow: 0 12px 28px rgba(59,130,246,0.28);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+      background: rgba(255,255,255,0.03);
+      color: var(--white);
+      border-color: rgba(255,255,255,0.14);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255,255,255,0.08);
+    }
+
+    footer {
+      padding: 28px 0 44px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .footer-line {
+      border-top: 1px solid rgba(255,255,255,0.08);
+      padding-top: 24px;
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 1080px) {
+      .metrics-grid,
+      .article-layout,
+      .results-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .results-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .nav-links {
+        display: none;
+      }
+    }
+
+    .contact-contact {
+      padding: 48px 0;
+    }
+
+    .contact-item p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .contact-item span {
+      display: block;
+      margin-top: 6px;
+      color: var(--white);
+      font-size: 16px;
+    }
+
+    @media (max-width: 640px) {
+      .section {
+        padding: 68px 0;
+      }
+
+      .contact-contact {
+        padding: 40px 0;
+      }
+
+      .metrics-grid,
+      .results-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .metrics-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .content-section h2 {
+        font-size: 22px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="nav">
+    <div class="container nav-inner">
+      <a href="index.html" class="logo">
+        <span class="logo-mark"></span>
+        <span>云飞互联 YunFei-Link</span>
+      </a>
+
+      <nav class="nav-links">
+        <a href="index.html#ecosystem">对接生态</a>
+        <a href="index.html#plugins">定制插件</a>
+        <a href="index.html#advantages">技术优势</a>
+        <a href="index.html#cases">成功案例</a>
+        <a href="index.html#process">服务流程</a>
+      </nav>
+
+      <a href="index.html#contact" class="nav-cta">获取专属对接方案</a>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero Section -->
+    <section class="case-hero">
+      <div class="container">
+        <div class="breadcrumb">
+          <a href="index.html">首页</a>
+          <span>/</span>
+          <a href="index.html#cases">成功案例</a>
+          <span>/</span>
+          <span>全国连锁茶饮案例</span>
+        </div>
+
+        <h1>某全国连锁茶饮 (300+ 门店) 系统对接案例</h1>
+        <p>
+          通过打通有赞商城、客如云 POS 与通联支付，帮助品牌建立统一的数据链路，实现线上线下全渠道运营一体化。
+        </p>
+
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <div class="metric-value">300+</div>
+            <div class="metric-label">覆盖门店数量</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-value">3 套</div>
+            <div class="metric-label">集成系统平台</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-value">35%</div>
+            <div class="metric-label">会员复购率提升</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-value">15 分钟</div>
+            <div class="metric-label">财务对账完成时间</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Article Layout -->
+    <section class="section">
+      <div class="container article-layout">
+        <!-- Main Content -->
+        <article class="article-main">
+          <!-- Project Background -->
+          <section class="content-section">
+            <h2>项目背景</h2>
+            <p>
+              该客户为国内知名连锁茶饮品牌，在全国 30+ 省市自治区拥有超过 300 家直营及加盟门店。随着业务规模的快速扩张，品牌同时运营着线上自营小程序商城（基于有赞生态）与线下门店 POS 系统（客如云），两大渠道各自为政，形成了明显的数据孤岛。
+            </p>
+            <p>
+              在项目实施前，客户面临着典型的零售餐饮行业痛点：线上订单无法实时同步至门店库存，会员在不同渠道的权益互不互通，财务部门需要人工耗时数天完成多套系统的账目核对。这些问题严重制约了品牌的精细化运营能力与市场响应速度。
+            </p>
+            <div class="highlight-box">
+              <strong>核心诉求</strong>
+              <span>构建统一的业务数据中台，实现「一次录入，全域同步」，让各渠道数据在同一口径下流转，支撑品牌未来的规模化扩张。</span>
+            </div>
+          </section>
+
+          <!-- Customer Challenges -->
+          <section class="content-section">
+            <h2>客户挑战</h2>
+            <div class="challenge-list">
+              <div class="challenge-item">
+                <div class="item-icon">⚠️</div>
+                <div class="item-content">
+                  <strong>订单状态不同步</strong>
+                  <span>线上商城订单生成后需手动录入 POS 系统，高峰期经常出现漏单、错单，且顾客在线上无法实时查看门店核销进度。</span>
+                </div>
+              </div>
+              <div class="challenge-item">
+                <div class="item-icon">🔄</div>
+                <div class="item-content">
+                  <strong>会员权益断层</strong>
+                  <span>用户在线上下单积累的积分无法在线下门店核销，线下消费也无法反哺线上会员等级，导致用户在全渠道的体验割裂，忠诚度难以沉淀。</span>
+                </div>
+              </div>
+              <div class="challenge-item">
+                <div class="item-icon">❗</div>
+                <div class="item-content">
+                  <strong>财务对账耗时</strong>
+                  <span>每晚需要 3 名财务人员耗时约 3 小时，手工核对有赞后台、客如云端、通联支付三方流水，节假日期间账单积压更可能延后至次日才能完成。</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Solution -->
+          <section class="content-section">
+            <h2>解决方案</h2>
+            <p>
+              我们为客户量身定制了<strong>「有赞 + 客如云 + 通联支付」三端集成方案</strong>，通过 API 对接与 Webhook 事件驱动架构，构建了一个高可用、易扩展的业务数据枢纽。
+            </p>
+
+            <div class="solution-list">
+              <div class="solution-item">
+                <div class="item-icon">✓</div>
+                <div class="item-content">
+                  <strong>订单全流程自动化</strong>
+                  <span>有赞商城订单通过 Webhook 实时推送至中间件，自动下发至对应门店客如云系统；POS 端核销后，状态毫秒级回传至有赞，顾客可在小程序实时查看取餐进度。</span>
+                </div>
+              </div>
+              <div class="solution-item">
+                <div class="item-icon">✓</div>
+                <div class="item-content">
+                  <strong>会员数据双向同步</strong>
+                  <span>开发专属「会员通」插件，打通有赞会员体系与客如云会员数据库。积分、优惠券、会员等级等核心权益在所有渠道实时保持一致。</span>
+                </div>
+              </div>
+              <div class="solution-item">
+                <div class="item-icon">✓</div>
+                <div class="item-content">
+                  <strong>智能财务对账引擎</strong>
+                  <span>对接通联支付流水 API，结合有赞退款数据与客如云收银记录，自动生成日维度的差异报表。异常账目系统自动标记并推送预警。</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="highlight-box">
+              <strong>技术亮点</strong>
+              <span>采用幂等性设计与消息队列重试机制，确保在网络抖动或系统宕机场景下数据零丢失、零重复；内置限流熔断保护，保障高峰期系统稳定性。</span>
+            </div>
+          </section>
+
+          <!-- Delivery Process -->
+          <section class="content-section">
+            <h2>交付过程</h2>
+            <p>
+              为降低上线风险并确保业务连续性，我们采取了分阶段递进的上线策略，并在关键节点进行了充分测试验证：
+            </p>
+            <div class="phase-timeline">
+              <div class="phase-item">
+                <div class="phase-title">第一阶段：需求诊断与技术方案设计（2 周）</div>
+                <div class="phase-desc">深入客户总部与各区域门店调研，梳理现有业务流程与痛点，输出包含接口映射关系、数据流转图、异常处理机制在内的完整技术方案书。</div>
+              </div>
+              <div class="phase-item">
+                <div class="phase-title">第二阶段：核心功能开发与沙箱联调（3 周）</div>
+                <div class="phase-desc">完成订单同步、会员通、基础对账三大模块开发，在有赞/客如云官方沙箱环境中进行全流程联调，确保逻辑准确无误。</div>
+              </div>
+              <div class="phase-item">
+                <div class="phase-title">第三阶段：试点门店小规模灰度（2 周）</div>
+                <div class="phase-desc">选取 10 家典型门店（涵盖购物中心店、社区店、写字楼店三种业态）先行上线，收集真实运营数据，优化异常场景处理策略。</div>
+              </div>
+              <div class="phase-item">
+                <div class="phase-title">第四阶段：全国分批推广与高峰期压测（4 周）</div>
+                <div class="phase-desc">按照华东→华南→华北→西南的节奏梯次推进，并在「双 11」、春节等高峰时段进行 7×24 小时压力监测，验证系统抗并发能力。</div>
+              </div>
+              <div class="phase-item">
+                <div class="phase-title">第五阶段：运维交接与持续迭代优化（持续）</div>
+                <div class="phase-desc">移交运维文档与监控面板，建立 7×24 小时故障响应机制，根据业务发展新需求持续迭代新功能模块。</div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Project Results -->
+          <section class="content-section">
+            <h2>项目成果</h2>
+            <p>
+              项目上线运行 6 个月后，客户经营效率与用户体验均实现了突破性提升，具体数据如下：
+            </p>
+
+            <div class="results-grid">
+              <div class="result-item">
+                <div class="result-number">+35%</div>
+                <div class="result-text">会员复购率显著提升</div>
+              </div>
+              <div class="result-item">
+                <div class="result-number">15 分钟</div>
+                <div class="result-text">财务对账从 3 小时缩短至 15 分钟</div>
+              </div>
+              <div class="result-item">
+                <div class="result-number">99.9%</div>
+                <div class="result-text">系统可用性高于预期目标</div>
+              </div>
+              <div class="result-item">
+                <div class="result-number">-85%</div>
+                <div class="result-text">人工对账成本大幅降低</div>
+              </div>
+            </div>
+
+            <p>
+              <strong>客户评价：</strong>「云飞互联团队不仅把系统接通了，更是站在我们的业务角度思考如何真正发挥数据的价值。会员通的上线让我们的私域运营效果立竿见影，现在的数字化能力已经能够支撑未来 3-5 年的规模增长。」
+            </p>
+          </section>
+
+          <!-- CTA -->
+          <div class="case-cta">
+            <h3>您的企业是否也面临类似问题？</h3>
+            <p>
+              我们将为您提供免费的系统诊断与定制对接方案建议。
+            </p>
+            <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;">
+              <a href="index.html#contact" class="btn btn-primary">联系获取专属方案</a>
+              <a href="index.html#cases" class="btn btn-secondary">查看更多案例</a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Sidebar -->
+        <aside class="article-sidebar">
+          <div class="sidebar-card">
+            <h3 class="sidebar-title">项目概览</h3>
+            <div class="summary-grid">
+              <div class="summary-row">
+                <span class="summary-label">客户类型</span>
+                <span class="summary-value">全国连锁茶饮品牌</span>
+              </div>
+              <div class="summary-row">
+                <span class="summary-label">门店规模</span>
+                <span class="summary-value">300+ 家</span>
+              </div>
+              <div class="summary-row">
+                <span class="summary-label">涉及系统</span>
+                <span class="summary-value">有赞/客如云/通联</span>
+              </div>
+              <div class="summary-row">
+                <span class="summary-label">项目周期</span>
+                <span class="summary-value">约 11 周</span>
+              </div>
+              <div class="summary-row">
+                <span class="summary-label">核心功能</span>
+                <span class="summary-value">订单同步/会员通/对账</span>
+              </div>
+              <div class="summary-row">
+                <span class="summary-label">行业领域</span>
+                <span class="summary-value">餐饮连锁 / 新零售</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="sidebar-card">
+            <h3 class="sidebar-title">相关案例</h3>
+            <div class="related-list">
+              <a href="#" class="related-item">
+                <strong>华东大型景区集团</strong>
+                <span>票付通 + 长城系统 + 闸机集成</span>
+              </a>
+              <a href="index.html#cases" class="related-item">
+                <strong>更多成功案例</strong>
+                <span>浏览全部行业案例</span>
+              </a>
+            </div>
+          </div>
+
+          <div class="sidebar-card" style="background:linear-gradient(135deg, rgba(59,130,246,0.15), rgba(34,197,94,0.1'));">
+            <h3 class="sidebar-title">需要技术方案咨询？</h3>
+            <p style="color:var(--muted);font-size:14px;margin:0 0 12px;">
+              工作时间 1 小时内响应，复杂项目配备专属技术顾问。
+            </p>
+            <a href="index.html#contact" class="btn btn-primary" style="width:100%;">免费咨询</a>
+          </div>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <!-- Contact Section -->
+  <section class="section contact-contact" style="border-top: 1px solid rgba(255,255,255,0.08);">
+    <div class="container">
+      <h3 style="font-size: 16px; margin-bottom: 14px;">联系我们</h3>
+      <div style="display: grid; gap: 10px;">
+        <div class="contact-item" style="padding: 12px 16px; border-radius: 12px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);">
+          <strong>商务热线</strong>
+          <span>13739185304</span>
+        </div>
+        <div class="contact-item" style="padding: 12px 16px; border-radius: 12px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);">
+          <strong>微信咨询</strong>
+          <p>扫码关注公众号或添加微信，获取详细方案。</p>
+          <img class="qrcode-small" src="docs/云飞企微.QRCODE.jpg" alt="微信二维码" style="width:120px; height:120px; margin-top:10px; border-radius:12px;" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container footer-line">
+      <div>© 2026 云飞互联 YunFei-Link. All Rights Reserved.</div>
+      <div>企业级三方系统对接专家 · 重塑业务连接，让数据释放增长价值</div>
+    </div>
+  </footer>
+</body>
+</html>

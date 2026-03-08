@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>页面不存在 - 云飞互联</title>
+  <meta name="description" content="您访问的页面不存在，请返回首页或切换至英文站点" />
+  <meta name="theme-color" content="#0f172a" />
+
+  <style>
+    :root {
+      --bg: #081120;
+      --bg-soft: #0f172a;
+      --card: rgba(255,255,255,0.06);
+      --card-border: rgba(255,255,255,0.12);
+      --text: #e5eefc;
+      --muted: #9fb1cc;
+      --primary: #3b82f6;
+      --primary-2: #60a5fa;
+      --accent: #22c55e;
+      --danger: #ef4444;
+      --white: #ffffff;
+      --shadow: 0 20px 60px rgba(0,0,0,0.35);
+      --radius: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+        "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(59,130,246,0.18), transparent 32%),
+        radial-gradient(circle at top right, rgba(239,68,68,0.1), transparent 26%),
+        linear-gradient(180deg, #07101d 0%, #0b1323 100%);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .container {
+      text-align: center;
+      padding: 48px;
+      max-width: 600px;
+    }
+
+    .error-code {
+      font-size: 140px;
+      font-weight: 900;
+      color: var(--danger);
+      margin: 0 0 8px;
+      letter-spacing: -8px;
+      line-height: 1;
+      text-shadow: 0 0 40px rgba(239,68,68,0.4);
+    }
+
+    h1 {
+      font-size: 32px;
+      color: var(--white);
+      margin: 0 0 16px;
+      font-weight: 800;
+    }
+
+    p {
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.7;
+      margin: 0 0 32px;
+    }
+
+    .hint-list {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 36px;
+      text-align: left;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 24px;
+    }
+
+    .hint-list li {
+      padding: 8px 0;
+      padding-left: 24px;
+      position: relative;
+      color: var(--muted);
+    }
+
+    .hint-list li::before {
+      content: '•';
+      position: absolute;
+      left: 8px;
+      color: var(--primary);
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 50px;
+      padding: 0 28px;
+      border-radius: 14px;
+      font-weight: 700;
+      font-size: 16px;
+      transition: 0.25s ease;
+      border: 1px solid transparent;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      color: var(--white);
+      box-shadow: 0 12px 28px rgba(59,130,246,0.28);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+      background: rgba(255,255,255,0.03);
+      color: var(--white);
+      border-color: rgba(255,255,255,0.14);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255,255,255,0.08);
+    }
+
+    @media (max-width: 640px) {
+      .container {
+        padding: 32px 20px;
+      }
+
+      .error-code {
+        font-size: 100px;
+        letter-spacing: -5px;
+      }
+
+      h1 {
+        font-size: 26px;
+      }
+
+      .btn-group {
+        flex-direction: column;
+      }
+
+      .btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="error-code">404</div>
+    <h1 id="title">抱歉，您访问的页面不存在</h1>
+    <p id="description">
+      您可能输入了错误的 URL，或者该页面已被移动或删除。
+    </p>
+
+    <ul class="hint-list">
+      <li id="hint1">请检查网址拼写是否正确</li>
+      <li id="hint2">尝试返回首页重新开始浏览</li>
+      <li id="hint3">如需帮助，请通过客服热线联系我们</li>
+    </ul>
+
+    <div class="btn-group">
+      <a href="/" class="btn btn-primary" id="btn-home">返回首页</a>
+      <a href="/en.html" class="btn btn-secondary" id="btn-en">English Site</a>
+    </div>
+  </div>
+
+  <script>
+    const lang = new URLSearchParams(window.location.search).get('lang');
+    
+    if (lang === 'en') {
+      document.documentElement.lang = 'en';
+      document.getElementById('title').textContent = 'Sorry, Page Not Found';
+      document.getElementById('description').innerHTML = `
+        The page you are looking for might have been removed, had its name changed, 
+        or is temporarily unavailable.
+      `;
+      document.getElementById('hint1').textContent = 'Check the URL for typing errors';
+      document.getElementById('hint2').textContent = 'Return to homepage and start browsing again';
+      document.getElementById('hint3').textContent = 'Contact customer service for assistance';
+      document.getElementById('btn-home').textContent = 'Back to Home';
+      document.getElementById('btn-en').textContent = 'English Site';
+      document.title = 'Page Not Found - YunFei-Link';
+    }
+  </script>
+</body>
+</html>
